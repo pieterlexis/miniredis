@@ -57,3 +57,19 @@ func Ints(args ...int) string {
 	}
 	return Array(ints...)
 }
+
+// Map assembles the args in a map. Args should be raw redis commands.
+// Must be an even number of arguments.
+// Example: Map(String("foo"), String("bar"))
+func Map(args ...string) string {
+	return fmt.Sprintf("%%%d\r\n", len(args)/2) + strings.Join(args, "")
+}
+
+// StringMap is is a wrapper to get a map of (bulk)strings.
+func StringMap(args ...string) string {
+	var strings []string
+	for _, a := range args {
+		strings = append(strings, String(a))
+	}
+	return Map(strings...)
+}

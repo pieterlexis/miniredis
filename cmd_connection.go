@@ -15,6 +15,7 @@ func commandsConnection(m *Miniredis) {
 	m.srv.Register("SELECT", m.cmdSelect)
 	m.srv.Register("SWAPDB", m.cmdSwapdb)
 	m.srv.Register("QUIT", m.cmdQuit)
+	m.srv.Register("RESP3", m.cmdResp3)
 }
 
 // PING
@@ -191,4 +192,10 @@ func (m *Miniredis) cmdQuit(c *server.Peer, cmd string, args []string) {
 	// QUIT isn't transactionfied and accepts any arguments.
 	c.WriteOK()
 	c.Close()
+}
+
+// RESP3: fake command use to develop RESP3 support. To be superseded by `HELLO` eventually
+func (m *Miniredis) cmdResp3(c *server.Peer, cmd string, args []string) {
+	c.Resp3 = true
+	c.WriteOK()
 }

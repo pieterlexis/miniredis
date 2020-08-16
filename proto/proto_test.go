@@ -82,6 +82,13 @@ func TestRead(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
 		test(t, "$-1\r\n")
 	})
+
+	t.Run("map", func(t *testing.T) {
+		test(t, "%0\r\n")
+		test(t, "%1\r\n-foo\r\n-bar\r\n")
+		test(t, "%2\r\n-foo\r\n$3\r\nfoo\r\n-bar\r\n-bar\r\n")
+		test(t, "%-1\r\n")
+	})
 }
 
 func TestReadArray(t *testing.T) {
@@ -151,6 +158,16 @@ func TestParse(t *testing.T) {
 			t.Errorf("read: %s", err)
 		}
 		if want := []interface{}{"foo", "bar"}; !reflect.DeepEqual(have, want) {
+			t.Errorf("have %q, want %q", have, want)
+		}
+	})
+
+	t.Run("string map", func(t *testing.T) {
+		have, err := Parse(StringMap("foo", "bar", "aap", "noot"))
+		if err != nil {
+			t.Errorf("read: %s", err)
+		}
+		if want := map[interface{}]interface{}{"foo": "bar", "aap": "noot"}; !reflect.DeepEqual(have, want) {
 			t.Errorf("have %q, want %q", have, want)
 		}
 	})

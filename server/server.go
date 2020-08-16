@@ -232,6 +232,7 @@ func (s *Server) TotalConnections() int {
 type Peer struct {
 	w            *bufio.Writer
 	closed       bool
+	Resp3        bool
 	Ctx          interface{} // anything goes, server won't touch this
 	onDisconnect []func()    // list of callbacks
 	mu           sync.Mutex  // for Block()
@@ -267,7 +268,7 @@ func (c *Peer) OnDisconnect(f func()) {
 func (c *Peer) Block(f func(*Writer)) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	f(&Writer{c.w})
+	f(&Writer{c.w, c.Resp3})
 }
 
 // WriteError writes a redis 'Error'
@@ -310,6 +311,13 @@ func (c *Peer) WriteLen(n int) {
 	})
 }
 
+// WriteMapLen starts a map with the given length (number of keys)
+func (c *Peer) WriteMapLen(n int) {
+	c.Block(func(w *Writer) {
+		w.WriteMapLen(n)
+	})
+}
+
 // WriteInt writes an integer
 func (c *Peer) WriteInt(i int) {
 	c.Block(func(w *Writer) {
@@ -335,7 +343,8 @@ func toInline(s string) string {
 
 // A Writer is given to the callback in Block()
 type Writer struct {
-	w *bufio.Writer
+	w     *bufio.Writer
+	resp3 bool
 }
 
 // WriteError writes a redis 'Error'
@@ -345,6 +354,14 @@ func (w *Writer) WriteError(e string) {
 
 func (w *Writer) WriteLen(n int) {
 	fmt.Fprintf(w.w, "*%d\r\n", n)
+}
+
+func (w *Writer) WriteMapLen(n int) {
+	if w.resp3 {
+		fmt.Fprintf(w.w, "%%%d\r\n", n)
+		return
+	}
+	w.WriteLen(n * 2)
 }
 
 // WriteBulk writes a bulk string
