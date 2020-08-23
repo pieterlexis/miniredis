@@ -24,4 +24,7 @@ func TestTypes(t *testing.T) {
 
 	test(Map(String("hi"), String("ho")), "%1\r\n$2\r\nhi\r\n$2\r\nho\r\n")
 	test(StringMap("hi", "ho"), "%1\r\n$2\r\nhi\r\n$2\r\nho\r\n")
+
+	test(Set(String("hi"), String("ho")), "~2\r\n$2\r\nhi\r\n$2\r\nho\r\n")
+	test(StringSet("hi", "ho"), "~2\r\n$2\r\nhi\r\n$2\r\nho\r\n")
 }

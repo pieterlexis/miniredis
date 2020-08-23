@@ -26,6 +26,7 @@ func readLine(r *bufio.Reader) (string, error) {
 }
 
 // Read an array, with all elements are the raw redis commands
+// Also reads sets and maps.
 func ReadArray(b string) ([]string, error) {
 	r := bufio.NewReader(strings.NewReader(b))
 	line, err := readLine(r)
@@ -37,13 +38,14 @@ func ReadArray(b string) ([]string, error) {
 	switch line[0] {
 	default:
 		return nil, ErrUnexpected
-	case '*':
+	case '*', '~':
 		length, err := strconv.Atoi(line[1 : len(line)-2])
 		if err != nil {
 			return nil, err
 		}
 		elems = length
 	case '%':
+		// we also read maps.
 		length, err := strconv.Atoi(line[1 : len(line)-2])
 		if err != nil {
 			return nil, err
@@ -172,8 +174,9 @@ func Read(r *bufio.Reader) (string, error) {
 			pos += n
 		}
 		return line + string(buf), nil
-	case '*':
+	case '*', '~':
 		// arrays are: `*6\r\n...`
+		// sets are: `~6\r\n...`
 		length, err := strconv.Atoi(line[1 : len(line)-2])
 		if err != nil {
 			return "", err

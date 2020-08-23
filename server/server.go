@@ -318,6 +318,13 @@ func (c *Peer) WriteMapLen(n int) {
 	})
 }
 
+// WriteSetLen starts a set with the given length (number of elements)
+func (c *Peer) WriteSetLen(n int) {
+	c.Block(func(w *Writer) {
+		w.WriteSetLen(n)
+	})
+}
+
 // WriteInt writes an integer
 func (c *Peer) WriteInt(i int) {
 	c.Block(func(w *Writer) {
@@ -362,6 +369,14 @@ func (w *Writer) WriteMapLen(n int) {
 		return
 	}
 	w.WriteLen(n * 2)
+}
+
+func (w *Writer) WriteSetLen(n int) {
+	if w.resp3 {
+		fmt.Fprintf(w.w, "~%d\r\n", n)
+		return
+	}
+	w.WriteLen(n)
 }
 
 // WriteBulk writes a bulk string

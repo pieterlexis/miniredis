@@ -179,6 +179,13 @@ func TestSetSrandmember(t *testing.T) {
 		c.Do("SET", "str", "I am a string")
 		c.Do("SRANDMEMBER", "str")
 	})
+
+	testRESP3(t, func(c *client) {
+		c.Do("SADD", "q", "aap")
+		c.Do("SRANDMEMBER", "q")
+		c.Do("SRANDMEMBER", "q", "1")
+		c.Do("SRANDMEMBER", "q", "0")
+	})
 }
 
 func TestSetSdiff(t *testing.T) {

@@ -399,6 +399,19 @@ func TestSrandmember(t *testing.T) {
 			proto.Error(msgWrongType),
 		)
 	})
+
+	mustOK(t, c, "RESP3")
+	t.Run("RESP3", func(t *testing.T) {
+		s.SetAdd("q", "aap")
+		mustDo(t, c,
+			"SRANDMEMBER", "q",
+			proto.String("aap"),
+		)
+		mustDo(t, c,
+			"SRANDMEMBER", "q", "1",
+			proto.StringSet("aap"),
+		)
+	})
 }
 
 // Test SDIFF

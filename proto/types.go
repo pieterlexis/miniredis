@@ -73,3 +73,18 @@ func StringMap(args ...string) string {
 	}
 	return Map(strings...)
 }
+
+// Set assembles the args in a map. Args should be raw redis commands.
+// Example: Set(String("foo"), String("bar"))
+func Set(args ...string) string {
+	return fmt.Sprintf("~%d\r\n", len(args)) + strings.Join(args, "")
+}
+
+// StringSet is is a wrapper to get a set of (bulk)strings.
+func StringSet(args ...string) string {
+	var strings []string
+	for _, a := range args {
+		strings = append(strings, String(a))
+	}
+	return Set(strings...)
+}
