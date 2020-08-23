@@ -152,6 +152,24 @@ func testTLS(t *testing.T, cb func(*client)) {
 	cb(client)
 }
 
+// like testRaw, but switched to RESP3 protocol.
+func testRESP3(t *testing.T, cb func(*client)) {
+	t.Helper()
+
+	sMini, err := miniredis.Run()
+	if err != nil {
+		t.Fatalf("unexpected miniredis error: %s", err.Error())
+	}
+	defer sMini.Close()
+
+	sReal, sRealAddr := Redis()
+	defer sReal.Close()
+
+	client := newClientResp3(t, sRealAddr, sMini)
+
+	cb(client)
+}
+
 func looselyEqual(a, b interface{}) bool {
 	switch av := a.(type) {
 	case string:
@@ -262,6 +280,34 @@ func newClientTLS(t *testing.T, realAddr string, mini *miniredis.Miniredis) *cli
 	)
 	if err != nil {
 		t.Fatalf("miniredis: %s", err.Error())
+	}
+
+	return &client{
+		t:         t,
+		miniredis: mini,
+		real:      cReal,
+		mini:      cMini,
+	}
+}
+
+func newClientResp3(t *testing.T, realAddr string, mini *miniredis.Miniredis) *client {
+	t.Helper()
+
+	cReal, err := proto.Dial(realAddr)
+	if err != nil {
+		t.Fatalf("realredis: %s", err.Error())
+	}
+	if _, err := cReal.Do("HELLO", "3"); err != nil {
+		t.Fatalf("realredis HELLO: %s", err.Error())
+	}
+
+	cMini, err := proto.Dial(mini.Addr())
+	if err != nil {
+		t.Fatalf("miniredis: %s", err.Error())
+	}
+	// 'HELLO' support is work in progress
+	if _, err := cMini.Do("RESP3"); err != nil {
+		t.Fatalf("miniredis RESP3: %s", err.Error())
 	}
 
 	return &client{
