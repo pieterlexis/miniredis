@@ -214,4 +214,8 @@ func TestStreamGroup(t *testing.T) {
 		c.Do("XACK", "planets", "processing", "0-1")
 		c.Do("XDEL", "planets", "0-1")
 	})
+
+	testRESP3(t, func(c *client) {
+		c.DoLoosely("XINFO", "STREAM", "foo")
+	})
 }
