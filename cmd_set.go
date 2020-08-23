@@ -116,7 +116,7 @@ func (m *Miniredis) cmdSdiff(c *server.Peer, cmd string, args []string) {
 			return
 		}
 
-		c.WriteLen(len(set))
+		c.WriteSetLen(len(set))
 		for k := range set {
 			c.WriteBulk(k)
 		}
@@ -274,7 +274,7 @@ func (m *Miniredis) cmdSmembers(c *server.Peer, cmd string, args []string) {
 		db := m.db(ctx.selectedDB)
 
 		if !db.exists(key) {
-			c.WriteLen(0)
+			c.WriteSetLen(0)
 			return
 		}
 
@@ -285,7 +285,7 @@ func (m *Miniredis) cmdSmembers(c *server.Peer, cmd string, args []string) {
 
 		members := db.setMembers(key)
 
-		c.WriteLen(len(members))
+		c.WriteSetLen(len(members))
 		for _, elem := range members {
 			c.WriteBulk(elem)
 		}

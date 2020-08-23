@@ -92,6 +92,13 @@ func TestSadd(t *testing.T) {
 			proto.Error(errWrongNumber("smembers")),
 		)
 	})
+
+	mustOK(t, c, "RESP3")
+	t.Run("RESP3", func(t *testing.T) {
+		mustDo(t, c, "SMEMBERS", "resp", proto.Set())
+		mustDo(t, c, "SADD", "resp", "aap", proto.Int(1))
+		mustDo(t, c, "SMEMBERS", "resp", proto.StringSet("aap"))
+	})
 }
 
 // Test SISMEMBER
