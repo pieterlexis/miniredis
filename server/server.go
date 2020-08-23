@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/tls"
 	"fmt"
+	"math"
 	"net"
 	"strings"
 	"sync"
@@ -326,9 +327,16 @@ func (c *Peer) WriteSetLen(n int) {
 }
 
 // WriteInt writes an integer
-func (c *Peer) WriteInt(i int) {
+func (c *Peer) WriteInt(n int) {
 	c.Block(func(w *Writer) {
-		w.WriteInt(i)
+		w.WriteInt(n)
+	})
+}
+
+// WriteFloat writes a float
+func (c *Peer) WriteFloat(n float64) {
+	c.Block(func(w *Writer) {
+		w.WriteFloat(n)
 	})
 }
 
@@ -385,8 +393,17 @@ func (w *Writer) WriteBulk(s string) {
 }
 
 // WriteInt writes an integer
-func (w *Writer) WriteInt(i int) {
-	fmt.Fprintf(w.w, ":%d\r\n", i)
+func (w *Writer) WriteInt(n int) {
+	fmt.Fprintf(w.w, ":%d\r\n", n)
+}
+
+// WriteFloat writes a float
+func (w *Writer) WriteFloat(n float64) {
+	if w.resp3 {
+		fmt.Fprintf(w.w, ",%s\r\n", formatFloat(n))
+		return
+	}
+	w.WriteBulk(formatFloat(n))
 }
 
 // WriteNull writes a redis Null element
@@ -410,4 +427,31 @@ func (w *Writer) WriteRaw(s string) {
 
 func (w *Writer) Flush() {
 	w.w.Flush()
+}
+
+// formatFloat formats a float the way redis does (sort-of)
+func formatFloat(v float64) string {
+	if math.IsInf(v, 1) {
+		return "inf"
+	}
+	if math.IsInf(v, -1) {
+		return "-inf"
+	}
+	return stripZeros(fmt.Sprintf("%.12f", v))
+}
+
+func stripZeros(sv string) string {
+	for strings.Contains(sv, ".") {
+		if sv[len(sv)-1] != '0' {
+			break
+		}
+		// Remove trailing 0s.
+		sv = sv[:len(sv)-1]
+		// Ends with a '.'.
+		if sv[len(sv)-1] == '.' {
+			sv = sv[:len(sv)-1]
+			break
+		}
+	}
+	return sv
 }

@@ -146,10 +146,11 @@ func Read(r *bufio.Reader) (string, error) {
 	switch line[0] {
 	default:
 		return "", ErrProtocol
-	case '+', '-', ':', '_':
+	case '+', '-', ':', ',', '_':
 		// +: inline string
 		// -: errors
 		// :: integer
+		// ,: float
 		// _: null
 		// Simple line based replies.
 		return line, nil

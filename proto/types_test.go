@@ -19,6 +19,10 @@ func TestTypes(t *testing.T) {
 
 	test(Error("ERR wrong"), "-ERR wrong\r\n")
 
+	test(Int(42), ":42\r\n")
+
+	test(Float(42.42), ",42.42\r\n")
+
 	test(Array(Inline("hi"), Inline("ho")), "*2\r\n+hi\r\n+ho\r\n")
 	test(Strings("hi", "ho"), "*2\r\n$2\r\nhi\r\n$2\r\nho\r\n")
 

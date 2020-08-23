@@ -29,6 +29,11 @@ func Int(n int) string {
 	return fmt.Sprintf(":%d\r\n", n)
 }
 
+// Float
+func Float(n float64) string {
+	return fmt.Sprintf(",%g\r\n", n)
+}
+
 const (
 	Nil     = "$-1\r\n"
 	NilList = "*-1\r\n"

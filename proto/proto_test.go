@@ -72,6 +72,14 @@ func TestRead(t *testing.T) {
 		test(t, ":10\r\n")
 	})
 
+	t.Run("floats", func(t *testing.T) {
+		test(t, ",10\r\n")
+		test(t, ",10.0\r\n")
+		test(t, ",10.123\r\n")
+		test(t, ",inf\r\n")
+		test(t, ",-inf\r\n")
+	})
+
 	t.Run("null", func(t *testing.T) {
 		test(t, "_\r\n")
 	})
