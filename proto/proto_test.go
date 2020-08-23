@@ -72,6 +72,10 @@ func TestRead(t *testing.T) {
 		test(t, ":10\r\n")
 	})
 
+	t.Run("null", func(t *testing.T) {
+		test(t, "_\r\n")
+	})
+
 	t.Run("array", func(t *testing.T) {
 		test(t, "*0\r\n")
 		test(t, "*1\r\n-foo\r\n")

@@ -391,6 +391,10 @@ func (w *Writer) WriteInt(i int) {
 
 // WriteNull writes a redis Null element
 func (w *Writer) WriteNull() {
+	if w.resp3 {
+		fmt.Fprint(w.w, "_\r\n")
+		return
+	}
 	fmt.Fprintf(w.w, "$-1\r\n")
 }
 
