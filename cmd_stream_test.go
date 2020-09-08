@@ -356,7 +356,6 @@ func TestStreamRead(t *testing.T) {
 			proto.Array(
 				proto.Array(proto.String("planets"),
 					proto.Array(
-						proto.Array(proto.String("1-0"), proto.Strings("name", "Venus", "greek-god", "Aphrodite", "idx", "2")),
 						proto.Array(proto.String("2-1"), proto.Strings("name", "Earth", "greek-god", "", "idx", "3")),
 						proto.Array(proto.String("3-0"), proto.Strings("greek-god", "Ares", "name", "Mars", "idx", "4")),
 						proto.Array(proto.String("4-1"), proto.Strings("name", "Jupiter", "greek-god", "Dias", "idx", "5")),
@@ -370,7 +369,6 @@ func TestStreamRead(t *testing.T) {
 			proto.Array(
 				proto.Array(proto.String("planets"),
 					proto.Array(
-						proto.Array(proto.String("1-0"), proto.Strings("name", "Venus", "greek-god", "Aphrodite", "idx", "2")),
 						proto.Array(proto.String("2-1"), proto.Strings("name", "Earth", "greek-god", "", "idx", "3")),
 						proto.Array(proto.String("3-0"), proto.Strings("greek-god", "Ares", "name", "Mars", "idx", "4")),
 						proto.Array(proto.String("4-1"), proto.Strings("name", "Jupiter", "greek-god", "Dias", "idx", "5")),
@@ -378,7 +376,6 @@ func TestStreamRead(t *testing.T) {
 				),
 				proto.Array(proto.String("planets2"),
 					proto.Array(
-						proto.Array(proto.String("3-0"), proto.Strings("greek-god", "Ares", "name", "Mars", "idx", "4")),
 						proto.Array(proto.String("4-1"), proto.Strings("name", "Jupiter", "greek-god", "Dias", "idx", "5")),
 					),
 				),

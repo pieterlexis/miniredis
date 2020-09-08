@@ -583,8 +583,8 @@ parsing:
 					break
 				}
 
-				// Continue if entry ID < start
-				if streamCmp(entry.ID, id) == -1 {
+				// Continue if entry ID <= start
+				if streamCmp(entry.ID, id) <= 0 {
 					continue
 				}
 				returnedEntries = append(returnedEntries, entry)
